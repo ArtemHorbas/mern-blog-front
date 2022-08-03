@@ -9,44 +9,20 @@ import ListItemText from "@mui/material/ListItemText";
 import Skeleton from "@mui/material/Skeleton";
 import { SideBlock } from "./SideBlock";
 import { useDispatch } from "react-redux";
-import { fetchPosts, fetchSortedPosts, setSortedPosts } from "../redux/slice/post";
-import { myAxios } from "../axios";
 import { Button } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { setActiveTag } from "../redux/slice/filter";
 
-export const TagsBlock = ({ items, isLoading, paramId, setActive }) => {
+export const TagsBlock = ({ items, isLoading }) => {
   
 	const dispatch = useDispatch()
-	
 
-	const setActiveTag = async (name) => {
-		try {
-			setActive(name)
-			let tag = name
-			dispatch(fetchSortedPosts({tag, paramId}))
-		} catch (error) {
-			console.error(error)
-			alert('Error while sorting posts')
-		}
-	}
-
-	const setAllTags = async () => {
-		try {
-			setActive('null')
-			dispatch(fetchPosts(paramId))
-		} catch (error) {
-			console.error(error)
-			alert('Error while taking posts')
-		}
-	}
-	
 	return (
     <SideBlock title="Tags">
 			<Button 
 				variant="outlined" 
 				size="large"
 				style={{ margin: "10px" }}
-				onClick={setAllTags}
+				onClick={() => dispatch(setActiveTag('null'))}
 			>
 				All Tags
 			</Button>
@@ -64,7 +40,7 @@ export const TagsBlock = ({ items, isLoading, paramId, setActive }) => {
                 {isLoading ? (
                   <Skeleton width={100} />
                 ) : (
-                  <ListItemText onClick={() => setActiveTag(name)} primary={name} />
+                  <ListItemText onClick={() => dispatch(setActiveTag(name))} primary={name} />
                 )}
               </ListItemButton>
             </ListItem>

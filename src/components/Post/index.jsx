@@ -10,7 +10,8 @@ import styles from './Post.module.scss';
 import { UserInfo } from '../UserInfo';
 import { PostSkeleton } from './Skeleton';
 import {useDispatch} from 'react-redux'
-import { fetchRemovePost } from '../../redux/slice/post';
+import { fetchRemovePost, fetchTags } from '../../redux/slice/post';
+import { setActiveTag } from '../../redux/slice/filter';
 
 export const Post = ({
   _id,
@@ -34,6 +35,7 @@ export const Post = ({
 
   const onClickRemove = () => {
 		dispatch(fetchRemovePost(_id))
+		dispatch(fetchTags())
 	};
 
   return (
@@ -65,8 +67,12 @@ export const Post = ({
           </h2>
           <ul className={styles.tags}>
             {tags.map((name) => (
-              <li key={name}>
-                <Link to={`/tag/${name}`}>#{name}</Link>
+              <li 
+								onClick={() => dispatch(setActiveTag(name))} 
+								key={name} 
+								style={{ cursor: 'pointer' }} 
+							>
+                #{name}
               </li>
             ))}
           </ul>

@@ -1,15 +1,8 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { myAxios } from '../../axios.js'
 
-export const fetchPosts = createAsyncThunk('post/fetchPosts', async (params) => {
-	const {data} = params === 0 
-		? await myAxios.get('/posts') 
-		: await myAxios.get('/posts/popular') 
-	return data
-})
-
-export const fetchSortedPosts = createAsyncThunk('post/fetchSortedPosts', async ({tag, paramId}) => {
-	const {data} = await myAxios.get(`/tags/${tag}/${paramId}`)
+export const fetchPosts = createAsyncThunk('post/fetchPosts', async ({paramId, activeTag}) => {
+	const {data} = await myAxios.get(`/posts/sortedBy/${paramId}/activeTag/${activeTag}`) 
 	return data
 })
 
@@ -37,11 +30,7 @@ const initialState = {
 const postSlice = createSlice({
 	name: 'post',
 	initialState,
-	reducers: {
-		setSortedPosts(state, action){
-			state.posts.items = action.payload
-		}
-	},
+	reducers: {},
 	extraReducers: {
 		//Gettin' posts
 		[fetchPosts.pending]: (state) => {
@@ -53,19 +42,6 @@ const postSlice = createSlice({
 			state.posts.status = 'loaded'
 		},
 		[fetchPosts.rejected]: (state) => {
-			state.posts.items = []
-			state.posts.status = 'error'
-		},
-		//Gettin' sorted posts
-		[fetchSortedPosts.pending]: (state) => {
-			state.posts.items = []
-			state.posts.status = 'loading'
-		},
-		[fetchSortedPosts.fulfilled]: (state, action) => {
-			state.posts.items = action.payload
-			state.posts.status = 'loaded'
-		},
-		[fetchSortedPosts.rejected]: (state) => {
 			state.posts.items = []
 			state.posts.status = 'error'
 		},
@@ -96,6 +72,6 @@ const postSlice = createSlice({
 	}
 })
 
-export const { setSortedPosts } = postSlice.actions
+// export const {  } = postSlice.actions
 
 export default postSlice.reducer
