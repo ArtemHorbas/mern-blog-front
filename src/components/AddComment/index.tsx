@@ -5,15 +5,19 @@ import { useParams } from 'react-router-dom'
 import TextField from "@mui/material/TextField";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
-import { useSelector } from "react-redux";
 import { myAxios } from "../../axios";
+import { useAppSelector } from "../../redux/store";
 
-export const Index = ({setNewComment}) => {
+type AddCommentType = {
+	setNewComment: (param: boolean) => void
+}
+
+export const Index: React.FC<AddCommentType> = ({setNewComment}) => {
   
 	const {id} = useParams()
 
 	const [text, setText] = React.useState('')
-	const {data} = useSelector(state => state.auth)
+	const {data} = useAppSelector(state => state.auth)
 
 	const onClick = async () => {
 
@@ -23,8 +27,8 @@ export const Index = ({setNewComment}) => {
 		}
 
 		try {
-			const {data} = await myAxios.post('/comments', fields)
-			await setNewComment(data)
+			await myAxios.post('/comments', fields)
+			setNewComment(true)
 			setText('')
 		} catch (error) {
 			console.warn(error)
@@ -37,7 +41,7 @@ export const Index = ({setNewComment}) => {
       <div className={styles.root}>
         <Avatar
           classes={{ root: styles.avatar }}
-          src={data.avatarUrl}
+          src={data?.avatarUrl}
         />
         <div className={styles.form}>
           <TextField

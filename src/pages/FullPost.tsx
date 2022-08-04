@@ -5,16 +5,23 @@ import { Index } from "../components/AddComment";
 import { CommentsBlock } from "../components/CommentsBlock";
 import { myAxios } from "../axios";
 import  ReactMarkdown  from 'react-markdown'
-import { useSelector } from "react-redux";
+import { useAppSelector } from "../redux/store";
+import { CommentsItemsType, PostsItemsType } from "../redux/post/type";
 
-export const FullPost = () => {
+export type FullPostItems = {
+	doc: PostsItemsType,
+	comments: CommentsItemsType[]
+}
+
+
+export const FullPost: React.FC = () => {
   
 	const {id} = useParams();
 
-	const UserData = useSelector(state => state.auth.data)
+	const UserData = useAppSelector(state => state.auth.data)
 
-	const [data, setData] = React.useState([])
-	const [newComment, setNewComment] = React.useState(null)
+	const [data, setData] = React.useState<FullPostItems>({ doc: {}, comments: []})
+	const [newComment, setNewComment] = React.useState(false)
 	const [isLoading, setIsLoading] = React.useState(true)
 
 	React.useEffect(() => {
@@ -38,7 +45,7 @@ export const FullPost = () => {
 	return (
     <>
       <Post
-        id={data.doc._id}
+        _id={data.doc._id}
         title={data.doc.title}
         imageUrl={`http://localhost:3333${data.doc.imageUrl}`}
         user={data.doc.user}
@@ -48,7 +55,7 @@ export const FullPost = () => {
         tags={data.doc.tags}
         isFullPost
       >
-        <ReactMarkdown children={data.doc.text} />
+        <ReactMarkdown children={data.doc.text ? data.doc.text : ''} />
       </Post>
 			<CommentsBlock
         items={data.comments}

@@ -4,25 +4,26 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Grid from '@mui/material/Grid';
 import { Post } from '../components/Post';
-import { useDispatch, useSelector } from 'react-redux';
 import { TagsBlock } from '../components/TagsBlock';
 import { CommentsBlock } from '../components/CommentsBlock';
-import { fetchComments, fetchPosts, fetchTags } from '../redux/slice/post';
 import { useNavigate } from 'react-router-dom';
-import { setFilters, setParamId } from '../redux/slice/filter';
+import { useAppDispatch, useAppSelector } from '../redux/store';
+import { Status } from '../redux/auth/type';
+import { setFilters, setParamId } from '../redux/filter/slice';
+import { fetchComments, fetchPosts, fetchTags, urlParams } from '../redux/post/asyncThunk';
 
-export const Home = () => {
+export const Home: React.FC = () => {
   
-	const dispatch = useDispatch()
+	const dispatch = useAppDispatch()
 	const navigate = useNavigate()
 
-	const { posts, tags, comments } = useSelector(state => state.post)
-	const {data} = useSelector(state => state.auth)
-	const {paramId, activeTag} = useSelector(state => state.filter)
+	const { posts, tags, comments } = useAppSelector(state => state.post)
+	const {data} = useAppSelector(state => state.auth)
+	const {paramId, activeTag} = useAppSelector(state => state.filter)
 
-	const isPostsLoading = posts.status === 'loading';
-	const isTagsLoading = tags.status === 'loading';
-	const isCommentsLoading = comments.status === 'loading';
+	const isPostsLoading = posts.status === Status.FIRST;
+	const isTagsLoading = tags.status === Status.FIRST;
+	const isCommentsLoading = comments.status === Status.FIRST;
 	
 	const isMounted = React.useRef(false)
 	const isSearch = React.useRef(false)
@@ -40,7 +41,7 @@ export const Home = () => {
 
 	React.useEffect(() => {
 		if(window.location.search){
-			const params = qs.parse(window.location.search.substring(1))
+			const params = (qs.parse(window.location.search.substring(1)) as unknown) as urlParams
 
 			dispatch(setFilters(params))
 

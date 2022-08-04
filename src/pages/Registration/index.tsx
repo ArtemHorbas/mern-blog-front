@@ -6,14 +6,20 @@ import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
 import styles from './Login.module.scss';
 import { useForm } from 'react-hook-form';
-import { useSelector, useDispatch } from 'react-redux';
-import { fetchRegister, isAuthSelector } from '../../redux/slice/auth';
 import { Navigate } from 'react-router-dom';
+import { LoginValues } from '../Login';
+import { isAuthSelector } from '../../redux/auth/slice';
+import { fetchRegister } from '../../redux/auth/asyncThunk';
+import { useAppDispatch, useAppSelector } from '../../redux/store';
 
-export const Registration = () => {
+export interface RegisterValues extends LoginValues{
+	fullName: string
+}
+
+export const Registration: React.FC = () => {
   
-	const dispatch = useDispatch();
-	const isAuth = useSelector(isAuthSelector)	
+	const dispatch = useAppDispatch();
+	const isAuth = useAppSelector(isAuthSelector)	
 
 	const {register, handleSubmit, formState: {errors, isValid}} = useForm({
 		defaultValues: {
@@ -24,7 +30,7 @@ export const Registration = () => {
 		mode: 'onChange'
 	})
 
-	const onSubmit = (values) => {
+	const onSubmit = (values: RegisterValues) => {
 		dispatch(fetchRegister(values))
 	}
 

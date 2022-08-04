@@ -1,7 +1,8 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { IFilterSlice } from './type'
 
 
-const initialState = {
+const initialState: IFilterSlice = {
 	paramId: "0",
 	activeTag: 'null',
 }
@@ -10,13 +11,13 @@ const filterSlice = createSlice({
 	name: 'filter',
 	initialState,
 	reducers: {
-		setParamId(state, action) {
+		setParamId(state, action: PayloadAction<number>) {
 			state.paramId = action.payload
 		},
-		setActiveTag(state, action){
+		setActiveTag(state, action: PayloadAction<string>){
 			state.activeTag = action.payload
 		},
-		setFilters(state, action) {
+		setFilters(state, action: PayloadAction<IFilterSlice>) {
 			state.paramId = Number(action.payload.paramId)
 			state.activeTag = action.payload.activeTag
 		}

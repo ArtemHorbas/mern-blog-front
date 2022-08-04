@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ChangeEvent } from 'react';
 import TextField from '@mui/material/TextField';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
@@ -7,9 +7,9 @@ import {Link, useNavigate, useParams} from 'react-router-dom';
 import 'easymde/dist/easymde.min.css';
 import styles from './AddPost.module.scss';
 import { myAxios } from '../../axios';
-import { useInput } from '../../hooks/useInput';
 
-export const AddPost = () => {
+
+export const AddPost: React.FC = () => {
 
 	const navigate = useNavigate()
 	const {id} = useParams()
@@ -22,14 +22,16 @@ export const AddPost = () => {
 	const [tags, setTags] = React.useState('');
 	const [title, setTitle] = React.useState('');
 
-	const inputFileRef = React.useRef(null)
+	const inputFileRef = React.useRef<HTMLInputElement>(null!)
 
-  const handleChangeFile = async (event) => {
+  const handleChangeFile = async (event: React.ChangeEvent<HTMLInputElement>) => {
 		try {
 			const formData = new FormData()
-			const file = event.target.files[0]
-			formData.append('image', file)
-
+			if(event.target.files){
+				const file = event.target.files[0]
+				formData.append('image', file)
+			}
+			
 			const {data} = await myAxios.post('/upload', formData)
 			setImageUrl(data.url)
 		} catch (error) {
@@ -42,7 +44,7 @@ export const AddPost = () => {
 		setImageUrl('')
 	};
 
-  const onChange = React.useCallback((value) => {
+  const onChange = React.useCallback((value: string) => {
     setValue(value);
   }, []);
 
@@ -74,7 +76,7 @@ export const AddPost = () => {
 	React.useEffect(() => {
 		if(id){
 			try {
-				async function getPost() {
+				const getPost = async () => {
 					const {data} = await myAxios.get(`/posts/${id}`)
 					setTitle(data.title)
 					setValue(data.text)
@@ -90,7 +92,7 @@ export const AddPost = () => {
 		}
 	},[])
 
-  const options = React.useMemo(
+  const options: any = React.useMemo(
     () => ({
       spellChecker: false,
       maxHeight: '400px',

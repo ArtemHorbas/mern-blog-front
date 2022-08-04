@@ -3,22 +3,24 @@ import Button from '@mui/material/Button';
 import { Link } from 'react-router-dom';
 import styles from './Header.module.scss';
 import Container from '@mui/material/Container';
-import { useSelector, useDispatch } from 'react-redux';
-import { isAuthSelector, logOut } from '../../redux/slice/auth';
+import { useAppDispatch, useAppSelector } from '../../redux/store';
+import { isAuthSelector, logOut } from '../../redux/auth/slice';
 
-export const Header = () => {
+export const Header: React.FC = () => {
 
-	const dispatch = useDispatch()
-  const isAuth = useSelector(isAuthSelector)
+	const dispatch = useAppDispatch()
+  const isAuth = useAppSelector(isAuthSelector)
 
-	const {data} = useSelector(state => state.auth)
+	const {data} = useAppSelector(state => state.auth)
 	const token = data ? data.token : ''
 
 	const isMounted = React.useRef(false)
 
 	React.useEffect(() => {
 		if(isMounted.current){
-			localStorage.setItem('token', token)
+			if(token){
+				localStorage.setItem('token', token)
+			}
 		}
 
 		isMounted.current = true

@@ -9,11 +9,20 @@ import { Link } from 'react-router-dom';
 import styles from './Post.module.scss';
 import { UserInfo } from '../UserInfo';
 import { PostSkeleton } from './Skeleton';
-import {useDispatch} from 'react-redux'
-import { fetchRemovePost, fetchTags } from '../../redux/slice/post';
-import { setActiveTag } from '../../redux/slice/filter';
+import { useAppDispatch } from '../../redux/store';
+import { setActiveTag } from '../../redux/filter/slice';
+import { fetchRemovePost, fetchTags } from '../../redux/post/asyncThunk';
+import { PostsItemsType } from '../../redux/post/type';
 
-export const Post = ({
+interface IPost extends PostsItemsType{
+	commentsCount?: number,
+	children?: React.ReactNode
+	isFullPost?: boolean,
+  isLoading?: boolean,
+  isEditable?: boolean,
+}
+ 
+export const Post: React.FC<IPost> = ({
   _id,
   title,
   createdAt,
@@ -28,15 +37,17 @@ export const Post = ({
   isEditable,
 }) => {
 
-	const dispatch = useDispatch();
+	const dispatch = useAppDispatch();
 
   if (isLoading) {
     return <PostSkeleton />;
   }
 
   const onClickRemove = () => {
-		dispatch(fetchRemovePost(_id))
-		dispatch(fetchTags())
+		if(_id){
+			dispatch(fetchRemovePost(_id))
+			dispatch(fetchTags())
+		}
 	};
 
   return (
@@ -61,13 +72,13 @@ export const Post = ({
         />
       )}
       <div className={styles.wrapper}>
-        <UserInfo {...user} additionalText={createdAt} />
+        <UserInfo {...user} additionalText={createdAt ? createdAt : ''} />
         <div className={styles.indention}>
           <h2 className={clsx(styles.title, { [styles.titleFull]: isFullPost })}>
             {isFullPost ? title : <Link to={`/posts/${_id}`}>{title}</Link>}
           </h2>
           <ul className={styles.tags}>
-            {tags.map((name) => (
+            {tags && tags.map((name) => (
               <li 
 								onClick={() => dispatch(setActiveTag(name))} 
 								key={name} 

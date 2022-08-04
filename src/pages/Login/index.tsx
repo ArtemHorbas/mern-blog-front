@@ -4,15 +4,21 @@ import TextField from "@mui/material/TextField";
 import Paper from "@mui/material/Paper";
 import Button from "@mui/material/Button";
 import { useForm } from "react-hook-form";
-import { useDispatch, useSelector } from 'react-redux';
 import styles from "./Login.module.scss";
-import { fetchAuth, isAuthSelector } from "../../redux/slice/auth";
 import { Navigate } from "react-router-dom";
+import { isAuthSelector } from "../../redux/auth/slice";
+import { fetchAuth } from "../../redux/auth/asyncThunk";
+import { useAppDispatch, useAppSelector } from "../../redux/store";
 
-export const Login = () => {
+export interface LoginValues {
+	email: string,
+	password: string
+}
+
+export const Login: React.FC = () => {
   
-	const dispatch = useDispatch();
-	const isAuth = useSelector(isAuthSelector)	
+	const dispatch = useAppDispatch();
+	const isAuth = useAppSelector(isAuthSelector)	
 
 	const {register, handleSubmit, formState: {errors, isValid}} = useForm({
 		defaultValues: {
@@ -22,11 +28,8 @@ export const Login = () => {
 		mode: 'onChange'
 	})
 
-	const onSubmit = values => {
+	const onSubmit = (values: LoginValues) => {
 		dispatch(fetchAuth(values))
-		if(!isAuth){
-			return alert('Incorrect email or password')
-		}
 	}
 
 	if(isAuth){
