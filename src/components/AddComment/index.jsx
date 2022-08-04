@@ -8,7 +8,7 @@ import Button from "@mui/material/Button";
 import { useSelector } from "react-redux";
 import { myAxios } from "../../axios";
 
-export const Index = () => {
+export const Index = ({setNewComment}) => {
   
 	const {id} = useParams()
 
@@ -18,10 +18,18 @@ export const Index = () => {
 	const onClick = async () => {
 
 		const fields = {
-			text
+			text,
+			postId: id
 		}
 
-		
+		try {
+			const {data} = await myAxios.post('/comments', fields)
+			await setNewComment(data)
+			setText('')
+		} catch (error) {
+			console.warn(error)
+			alert('Error while uploading new comment')
+		}
 	}
 
 	return (

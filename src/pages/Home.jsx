@@ -6,7 +6,8 @@ import Grid from '@mui/material/Grid';
 import { Post } from '../components/Post';
 import { useDispatch, useSelector } from 'react-redux';
 import { TagsBlock } from '../components/TagsBlock';
-import { fetchPosts, fetchTags } from '../redux/slice/post';
+import { CommentsBlock } from '../components/CommentsBlock';
+import { fetchComments, fetchPosts, fetchTags } from '../redux/slice/post';
 import { useNavigate } from 'react-router-dom';
 import { setFilters, setParamId } from '../redux/slice/filter';
 
@@ -15,12 +16,13 @@ export const Home = () => {
 	const dispatch = useDispatch()
 	const navigate = useNavigate()
 
-	const { posts, tags } = useSelector(state => state.post)
+	const { posts, tags, comments } = useSelector(state => state.post)
 	const {data} = useSelector(state => state.auth)
 	const {paramId, activeTag} = useSelector(state => state.filter)
 
 	const isPostsLoading = posts.status === 'loading';
 	const isTagsLoading = tags.status === 'loading';
+	const isCommentsLoading = comments.status === 'loading';
 	
 	const isMounted = React.useRef(false)
 	const isSearch = React.useRef(false)
@@ -51,14 +53,16 @@ export const Home = () => {
 			dispatch(fetchPosts({paramId, activeTag}))
 			if(!isTagsLoaded.current){
 				dispatch(fetchTags())
+				dispatch(fetchComments())
 			}
+			
+			isTagsLoaded.current = true
 		}		
 				
 		isSearch.current = false
-		isTagsLoaded.current = true
 	}, [paramId, activeTag])
 
-	
+
 	return (
     <>
       <Tabs style={{ marginBottom: 15 }} value={Number(paramId)}  aria-label="basic tabs example">
@@ -79,6 +83,7 @@ export const Home = () => {
               user={obj.user}
               createdAt={obj.createdAt}
               viewsCount={obj.viewsCount}
+							commentsCount={comments.items.filter(item => item.post._id == obj._id).length}
               tags={obj.tags}
               isEditable={data?._id === obj.user._id}
             />
@@ -86,6 +91,10 @@ export const Home = () => {
         </Grid>
         <Grid xs={4} item>
           <TagsBlock items={tags.items} isLoading={isTagsLoading} />
+					<CommentsBlock
+            items={comments.items}
+            isLoading={isCommentsLoading}
+          />
         </Grid>
       </Grid>
     </>

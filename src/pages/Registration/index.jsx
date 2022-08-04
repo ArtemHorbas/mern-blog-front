@@ -47,7 +47,7 @@ export const Registration = () => {
 					type="text"
 					error={Boolean(errors.fullName?.message)}
 					helperText={errors.fullName?.message}
-					{...register('fullName', {required: 'Write your name'})}
+					{...register('fullName', {required: 'Write your name', minLength: {value: 3, message: "This input must exceed 3 characters"}})}
 					fullWidth 
 				/>
 				<TextField 
@@ -65,7 +65,7 @@ export const Registration = () => {
 					type="password"
 					error={Boolean(errors.password?.message)}
 					helperText={errors.password?.message}
-					{...register('password', {required: 'Write a password'})}
+					{...register('password', {required: 'Write a password', minLength: {value: 4, message: "This input must exceed 4 characters"}})}
 					fullWidth 
 				/>
 				<Button disabled={!isValid} type='submit' size="large" variant="contained" fullWidth>

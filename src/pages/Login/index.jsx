@@ -22,8 +22,11 @@ export const Login = () => {
 		mode: 'onChange'
 	})
 
-	const onSubmit = (values) => {
+	const onSubmit = values => {
 		dispatch(fetchAuth(values))
+		if(!isAuth){
+			return alert('Incorrect email or password')
+		}
 	}
 
 	if(isAuth){
@@ -51,7 +54,7 @@ export const Login = () => {
 					type="password"
 					error={Boolean(errors.password?.message)}
 					helperText={errors.password?.message}
-					{...register('password', {required: 'Write a password'})} 
+					{...register('password', {required: 'Write a password', minLength: {value: 4, message: "This input must exceed 4 characters"}})} 
 					fullWidth 
 				/>
 				<Button disabled={!isValid} type="submit" size="large" variant="contained" fullWidth>

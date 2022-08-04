@@ -11,7 +11,10 @@ export const FullPost = () => {
   
 	const {id} = useParams();
 
+	const UserData = useSelector(state => state.auth.data)
+
 	const [data, setData] = React.useState([])
+	const [newComment, setNewComment] = React.useState(null)
 	const [isLoading, setIsLoading] = React.useState(true)
 
 	React.useEffect(() => {
@@ -26,7 +29,7 @@ export const FullPost = () => {
 		}
 		
 		getData()
-	},[])
+	},[newComment])
 
 	if(isLoading){
 		return <Post isLoading={true} isFullPost/>
@@ -35,17 +38,24 @@ export const FullPost = () => {
 	return (
     <>
       <Post
-        id={data._id}
-        title={data.title}
-        imageUrl={`http://localhost:3333${data.imageUrl}`}
-        user={data.user}
-        createdAt={data.createdAt}
-        viewsCount={data.viewsCount}
-        tags={data.tags}
+        id={data.doc._id}
+        title={data.doc.title}
+        imageUrl={`http://localhost:3333${data.doc.imageUrl}`}
+        user={data.doc.user}
+        createdAt={data.doc.createdAt}
+        viewsCount={data.doc.viewsCount}
+				commentsCount={data.comments.length}
+        tags={data.doc.tags}
         isFullPost
       >
-        <ReactMarkdown children={data.text} />
+        <ReactMarkdown children={data.doc.text} />
       </Post>
+			<CommentsBlock
+        items={data.comments}
+        isLoading={isLoading}
+      >
+        {UserData && <Index setNewComment={setNewComment} />}
+      </CommentsBlock>
     </>
   );
 };
