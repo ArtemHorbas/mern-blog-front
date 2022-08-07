@@ -1,10 +1,10 @@
 import axios from 'axios'
 
 export const myAxios = axios.create({
-	baseURL: 'http://localhost:3333'
+	baseURL: 'https://mern-blog-4-portfolio.herokuapp.com'
 })
 
-myAxios.interceptors.request.use(config => {
+myAxios.interceptors.request.use((config) => {
 	config.headers.Authorization = window.localStorage.getItem('token')
 	return config
 })
